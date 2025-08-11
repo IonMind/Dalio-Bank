@@ -20,8 +20,8 @@ public class NRIAccount extends Account implements NRIInterface {
     private final int transactionLimit = 2;
     private String residingCountry;
 
-    public NRIAccount(Long accountNumber, String accountHolderName, Double balance, String residingCountry) {
-        super(accountNumber, accountHolderName, balance, 5000.0);
+    public NRIAccount(String accountHolderName, Double balance, String residingCountry) {
+        super(accountHolderName, balance, 5000.0);
         if (balance < minimumBalance) {
             throw new IllegalArgumentException("Initial balance must be at least " + minimumBalance);
         }
@@ -29,8 +29,8 @@ public class NRIAccount extends Account implements NRIInterface {
     }
 
     @Override
-    public String getAccountType() {
-        return accountType.toString();
+    public AccountType getAccountType() {
+        return accountType;
     }
 
     @Override

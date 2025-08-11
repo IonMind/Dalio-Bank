@@ -1,4 +1,6 @@
 package com.daliobank.accounts.model.dto;
 
-public record AccountRequestDTO(String accountType, String accountHolderName, double initialBalance) {
+import com.daliobank.accounts.model.enums.AccountType;
+
+public record AccountRequestDTO(AccountType accountType, String accountHolderName, double initialBalance) {
 }

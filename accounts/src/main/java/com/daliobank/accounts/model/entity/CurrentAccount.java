@@ -21,8 +21,8 @@ public class CurrentAccount extends Account implements CurrentAccountInterface, 
     private final int transactionLimit = 10;
     private String companyName;
 
-    public CurrentAccount(Long accountNumber, String accountHolderName, Double balance, String companyName) {
-        super(accountNumber, accountHolderName, balance, 10000.0);
+    public CurrentAccount(String accountHolderName, Double balance, String companyName) {
+        super(accountHolderName, balance, 10000.0);
         if (balance < minimumBalance) {
             throw new IllegalArgumentException("Initial balance must be at least " + minimumBalance);
         }
@@ -30,8 +30,8 @@ public class CurrentAccount extends Account implements CurrentAccountInterface, 
     }
 
     @Override
-    public String getAccountType() {
-        return accountType.toString();
+    public AccountType getAccountType() {
+        return accountType;
     }
 
     @Override

@@ -1,25 +1,25 @@
 package com.daliobank.accounts.model.entity;
 
+import com.daliobank.accounts.model.enums.AccountType;
+
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "account_type")
+// @AllArgsConstructor
 public abstract class Account {
-    
 
     @Setter(value = AccessLevel.NONE)
     @Id
@@ -27,9 +27,15 @@ public abstract class Account {
     private String accountHolderName;
     private Double balance;
     protected final Double minimumBalance;
- 
+
+    public Account(String accountHolderName, Double balance, Double minimumBalance) {
+        this.minimumBalance = null;
+        this.accountHolderName = accountHolderName;
+        this.balance = balance;
+    }
+
     // define common methods for all account types
-    public abstract String getAccountType();
+    public abstract AccountType getAccountType();
 
     public void deposit(Double amount) {
         this.balance += amount;
@@ -42,8 +48,9 @@ public abstract class Account {
             throw new IllegalArgumentException("Insufficient balance");
         }
     }
+
     @Override
-    public String toString( ) {
+    public String toString() {
         return "Account{" +
                 ", accountNumber=" + accountNumber +
                 ", accountHolderName='" + accountHolderName + '\'' +

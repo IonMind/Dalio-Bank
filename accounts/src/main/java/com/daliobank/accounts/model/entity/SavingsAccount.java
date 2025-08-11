@@ -19,16 +19,16 @@ public class SavingsAccount extends Account implements LoanFacility {
     private final AccountType accountType = AccountType.SAVINGS;
     private final int transactionLimit = 5;
 
-    public SavingsAccount(Long accountNumber, String accountHolderName, Double balance) {
-        super(accountNumber, accountHolderName, balance, 1000.0);
+    public SavingsAccount(String accountHolderName, Double balance) {
+        super(accountHolderName, balance, 1000.0);
         if (balance < minimumBalance) {
             throw new IllegalArgumentException("Initial balance must be at least " + minimumBalance);
         }
     }
 
     @Override
-    public String getAccountType() {
-        return accountType.toString();
+    public AccountType getAccountType() {
+        return accountType;
     }
 
     @Override
