@@ -1,7 +1,10 @@
 package com.daliobank.accounts.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.daliobank.accounts.exception.AccountNotFoundException;
+import com.daliobank.accounts.exception.InvalidAccountDetails;
 import com.daliobank.accounts.model.dto.AccountRequestDTO;
 import com.daliobank.accounts.model.dto.AccountResponseDTO;
 import com.daliobank.accounts.model.entity.Account;
@@ -11,6 +14,9 @@ import com.daliobank.accounts.model.entity.SavingsAccount;
 import com.daliobank.accounts.model.enums.AccountType;
 import com.daliobank.accounts.repository.AccountRepo;
 
+import jakarta.transaction.Transactional;
+
+@Service
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -27,26 +33,28 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void debitAccount(Long accountNumber,Double amount) {
-        searchAccount(accountNumber).withdraw(amount);
+    @Transactional
+    public String withdraw(Long accountNumber,Double amount) {
+       return "Updated Balance :" + accountRepo.save(searchAccount(accountNumber).withdraw(amount)).getBalance().toString();
     }
 
     @Override
-    public void creditAccount(Long accountNumber, Double amount) {
-        searchAccount(accountNumber).deposit(amount);
+    @Transactional
+    public String deposit(Long accountNumber, Double amount) {
+        return "Updated Balance :" + accountRepo.save(searchAccount(accountNumber).deposit(amount)).getBalance().toString();
     }
 
     private Account createAccount(AccountRequestDTO accountDto) {
-        if (accountDto.accountType() == AccountType.SAVINGS) {
+        if (accountDto.accountType().toLowerCase().equals(AccountType.SAVINGS.toString().toLowerCase()) ) {
             return new SavingsAccount(accountDto.accountHolderName(), accountDto.initialBalance());
-        } else if (accountDto.accountType() == AccountType.CURRENT) {
+        } else if (accountDto.accountType().toLowerCase().equals(AccountType.CURRENT.toString().toLowerCase())) {
             return new CurrentAccount(accountDto.accountHolderName(), accountDto.initialBalance(),
                     accountDto.accountHolderName());
-        } else if (accountDto.accountType() == AccountType.NRI) {
+        } else if (accountDto.accountType().toLowerCase().equals(AccountType.NRI.toString().toLowerCase())) {
             return new NRIAccount(accountDto.accountHolderName(), accountDto.initialBalance(),
                     accountDto.accountHolderName());
         } else {
-            throw new IllegalArgumentException("Invalid account type");
+            throw new InvalidAccountDetails("accountType must be one of the following:  SAVINGS, CURRENT, NRI");
         }
     }
 
@@ -57,6 +65,6 @@ public class AccountServiceImpl implements AccountService {
 
     private Account searchAccount(Long accountNumber) {
         return accountRepo.findById(accountNumber)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid account type"));
+                .orElseThrow(() -> new AccountNotFoundException("No account found with number: " + accountNumber));
     }
 }

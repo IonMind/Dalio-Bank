@@ -1,5 +1,6 @@
 package com.daliobank.accounts.model.entity;
 
+import com.daliobank.accounts.exception.InsufficientFundsException;
 import com.daliobank.accounts.model.entity.interfaces.NRIInterface;
 import com.daliobank.accounts.model.enums.AccountType;
 
@@ -16,34 +17,36 @@ import lombok.Setter;
 @DiscriminatorValue("NRI Account")
 public class NRIAccount extends Account implements NRIInterface {
 
-    private final AccountType accountType = AccountType.NRI;
-    private final int transactionLimit = 2;
+    // private final AccountType accountType = AccountType.NRI;
+    // private final int transactionLimit = 2;
     private String residingCountry;
 
     public NRIAccount(String accountHolderName, Double balance, String residingCountry) {
-        super(accountHolderName, balance, 5000.0);
-        if (balance < minimumBalance) {
-            throw new IllegalArgumentException("Initial balance must be at least " + minimumBalance);
+        super(accountHolderName, balance);
+        if (balance < getMinimumBalance()) {
+            throw new InsufficientFundsException("Initial balance must be at least " + getMinimumBalance());
         }
         this.residingCountry = residingCountry;
     }
 
     @Override
     public AccountType getAccountType() {
-        return accountType;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + ", NRIAccount{" +
-                ", accountType='" + accountType.toString() + '\'' +
-                ", transactionLimit=" + transactionLimit +
-                '}';
+        return AccountType.NRI;
     }
 
     @Override
     public String getResidingCountry() {
         return residingCountry;
+    }
+
+    @Override
+    public double getMinimumBalance() {
+        return 5000.0;
+    }
+
+    @Override
+    public int getTransactionLimit() {
+        return 2;
     }
 
 }

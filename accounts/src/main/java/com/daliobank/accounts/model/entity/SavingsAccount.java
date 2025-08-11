@@ -1,5 +1,6 @@
 package com.daliobank.accounts.model.entity;
 
+import com.daliobank.accounts.exception.InsufficientFundsException;
 import com.daliobank.accounts.model.entity.interfaces.LoanFacility;
 import com.daliobank.accounts.model.enums.AccountType;
 
@@ -16,26 +17,28 @@ import lombok.Setter;
 @DiscriminatorValue("Savings Account")
 public class SavingsAccount extends Account implements LoanFacility {
 
-    private final AccountType accountType = AccountType.SAVINGS;
-    private final int transactionLimit = 5;
+    // private final AccountType accountType = AccountType.SAVINGS;
+
 
     public SavingsAccount(String accountHolderName, Double balance) {
-        super(accountHolderName, balance, 1000.0);
-        if (balance < minimumBalance) {
-            throw new IllegalArgumentException("Initial balance must be at least " + minimumBalance);
+        super(accountHolderName, balance);
+        if (balance < getMinimumBalance()) {
+            throw new InsufficientFundsException("Initial balance must be at least " + getMinimumBalance());
         }
     }
 
     @Override
     public AccountType getAccountType() {
-        return accountType;
+        return AccountType.SAVINGS;
     }
 
     @Override
-    public String toString() {
-        return super.toString() + ", SavingsAccount{" +
-                ", accountType='" + accountType.toString() + '\'' +
-                ", transactionLimit=" + transactionLimit +
-                '}';
+    public double getMinimumBalance() {
+        return 1000.0;
+    }
+
+    @Override
+    public int getTransactionLimit() {
+        return 5;
     }
 }

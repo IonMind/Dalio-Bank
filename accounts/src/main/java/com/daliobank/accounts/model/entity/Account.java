@@ -1,9 +1,12 @@
 package com.daliobank.accounts.model.entity;
 
+import com.daliobank.accounts.exception.InsufficientFundsException;
 import com.daliobank.accounts.model.enums.AccountType;
 
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -23,30 +26,34 @@ public abstract class Account {
 
     @Setter(value = AccessLevel.NONE)
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long accountNumber;
     private String accountHolderName;
     private Double balance;
-    protected final Double minimumBalance;
 
-    public Account(String accountHolderName, Double balance, Double minimumBalance) {
-        this.minimumBalance = null;
+
+    public Account(String accountHolderName, Double balance) {
         this.accountHolderName = accountHolderName;
         this.balance = balance;
     }
 
     // define common methods for all account types
     public abstract AccountType getAccountType();
+    public abstract double getMinimumBalance();
+    public abstract int getTransactionLimit();
 
-    public void deposit(Double amount) {
+    public Account deposit(Double amount) {
         this.balance += amount;
+        return this;
     }
 
-    public void withdraw(Double amount) {
+    public Account withdraw(Double amount) {
         if (amount <= this.balance) {
             this.balance -= amount;
         } else {
-            throw new IllegalArgumentException("Insufficient balance");
+            throw new InsufficientFundsException("Insufficient balance, current balance is " + this.balance);
         }
+        return this;
     }
 
     @Override
@@ -55,7 +62,9 @@ public abstract class Account {
                 ", accountNumber=" + accountNumber +
                 ", accountHolderName='" + accountHolderName + '\'' +
                 ", balance=" + balance +
-                ", minimumBalance=" + minimumBalance +
+                ", minimumBalanceRequirement=" + getMinimumBalance() +
+                ", transactionLimit=" + getTransactionLimit() +
+                ", account type=" + getAccountType() +
                 '}';
     }
 }
