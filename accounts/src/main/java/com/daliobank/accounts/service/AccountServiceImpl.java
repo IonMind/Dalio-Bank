@@ -11,7 +11,6 @@ import com.daliobank.accounts.model.entity.Account;
 import com.daliobank.accounts.model.entity.CurrentAccount;
 import com.daliobank.accounts.model.entity.NRIAccount;
 import com.daliobank.accounts.model.entity.SavingsAccount;
-import com.daliobank.accounts.model.enums.AccountType;
 import com.daliobank.accounts.repository.AccountRepo;
 
 import jakarta.transaction.Transactional;
@@ -45,17 +44,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private Account createAccount(AccountRequestDTO accountDto) {
-        if (accountDto.accountType().toLowerCase().equals(AccountType.SAVINGS.toString().toLowerCase()) ) {
-            return new SavingsAccount(accountDto.accountHolderName(), accountDto.initialBalance());
-        } else if (accountDto.accountType().toLowerCase().equals(AccountType.CURRENT.toString().toLowerCase())) {
-            return new CurrentAccount(accountDto.accountHolderName(), accountDto.initialBalance(),
-                    accountDto.accountHolderName());
-        } else if (accountDto.accountType().toLowerCase().equals(AccountType.NRI.toString().toLowerCase())) {
-            return new NRIAccount(accountDto.accountHolderName(), accountDto.initialBalance(),
-                    accountDto.accountHolderName());
-        } else {
-            throw new InvalidAccountDetails("accountType must be one of the following:  SAVINGS, CURRENT, NRI");
-        }
+        String type = accountDto.accountType().toUpperCase();
+        // Using switch expression for cleaner code
+        return switch (type) {
+            case "SAVINGS" -> new SavingsAccount(accountDto.accountHolderName(), accountDto.initialBalance());
+            case "CURRENT" -> new CurrentAccount(accountDto.accountHolderName(), accountDto.initialBalance(), accountDto.accountHolderName());
+            case "NRI" -> new NRIAccount(accountDto.accountHolderName(), accountDto.initialBalance(), accountDto.accountHolderName());
+            default -> throw new InvalidAccountDetails("accountType must be one of the following: SAVINGS, CURRENT, NRI");
+        };
     }
 
     private AccountResponseDTO createResponse(Account account) {
