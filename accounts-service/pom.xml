@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.daliobank</groupId>
-	<artifactId>accounts</artifactId>
+	<artifactId>accounts-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>accounts</name>
-	<description>Demo project for Spring Boot</description>
+	<name>accounts-service</name>
+	<description>Microservice responsible for handling accounts CRUD</description>
 	<url />
 	<licenses>
 		<license />
