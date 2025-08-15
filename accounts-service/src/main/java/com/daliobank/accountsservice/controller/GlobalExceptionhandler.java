@@ -25,9 +25,10 @@ public class GlobalExceptionhandler {
     public ResponseEntity<String> handleInvalidAccountDetails(InvalidAccountDetails ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
-    // @ExceptionHandler(Exception.class)
-    // public ResponseEntity<String> handleGenericError(Exception ex) {
-    //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    //             .body("Something went wrong. Please try again later.");
-    // }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericError(Exception ex) {   
+        ex.printStackTrace(); // Log the exception stack trace for debugging
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Something went wrong. Please try again later.");
+    }
 }
