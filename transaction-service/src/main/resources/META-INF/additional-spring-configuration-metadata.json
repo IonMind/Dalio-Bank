@@ -1,0 +1,9 @@
+{
+    "properties": [
+        {
+            "name": "accounts.service.base-url",
+            "type": "java.lang.String",
+            "description": "base url to access accounts service"
+        }
+    ]
+}
