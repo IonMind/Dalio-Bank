@@ -66,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
                 if (success) {
                         return createAndSaveTransaction(accounNumber, amount, transactionType, description);
                 } else {
-                      throw new ExecutionException("Internal Server Error");
+                        throw new ExecutionException("Internal Server Error");
                 }
 
         }

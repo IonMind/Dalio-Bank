@@ -9,6 +9,8 @@ import com.daliobank.transaction_service.Model.Transaction;
 
 public interface TransactionService {
     public List<Transaction> getTransactionsByAccountNumber(Long accountNumber);
+
     public Transaction saveTransaction(TransactionRequestDTO transactionRequestDTO);
+
     public TransferResponseDTO transferMoney(TransferRequestDTO transferRequestDTO);
 }
