@@ -11,6 +11,7 @@ import com.daliobank.bankingcommons.dto.TransferRequestDTO;
 import com.daliobank.bankingcommons.dto.TransferResponseDTO;
 import com.daliobank.bankingcommons.enums.TransactionType;
 import com.daliobank.bankingcommons.exception.DepositFailedException;
+import com.daliobank.bankingcommons.exception.InvalidTransactionType;
 import com.daliobank.bankingcommons.exception.NoTransactionsFoundException;
 import com.daliobank.transaction_service.Model.Transaction;
 import com.daliobank.transaction_service.repository.TransactionRepository;
@@ -45,9 +46,29 @@ public class TransactionServiceImpl implements TransactionService {
 
         @Override
         public Transaction saveTransaction(TransactionRequestDTO transactionRequestDTO) {
-                return createAndSaveTransaction(transactionRequestDTO.accountNumber(), transactionRequestDTO.amount(),
-                                TransactionType.fromString(transactionRequestDTO.transactionType()),
-                                transactionRequestDTO.description());
+                var transactionType = TransactionType.fromString(transactionRequestDTO.transactionType());
+                var accounNumber = transactionRequestDTO.accountNumber();
+                var amount = transactionRequestDTO.amount();
+                var description = transactionRequestDTO.description();
+                boolean success = false;
+                switch (transactionType) {
+                        case CREDIT:
+                                accountsServiceClient.depositMoney(accounNumber, amount);
+                                success = true;
+                                break;
+                        case DEBIT:
+                                accountsServiceClient.withdrawMoney(accounNumber, amount);
+                                success = true;
+                                break;
+                        default:
+                                throw new InvalidTransactionType("Invalid TransactionType");
+                }
+                if (success) {
+                        return createAndSaveTransaction(accounNumber, amount, transactionType, description);
+                } else {
+                      throw new ExecutionException("Internal Server Error");
+                }
+
         }
 
         @Override

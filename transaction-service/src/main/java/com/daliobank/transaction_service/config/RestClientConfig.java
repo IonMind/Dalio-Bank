@@ -36,7 +36,7 @@ public class RestClientConfig {
                             String errorResponse = new String(response.getBody().readAllBytes());
                             log.error("REQUEST-> " + request.getURI().toString() + " Response-> "
                                     + response.getStatusCode().value() + errorResponse);
-                            throw new InvalidTransactionType(errorResponse);
+                            throw new InvalidTransactionType(errorResponse); //errors like inscufficient balance
                         })
                 .defaultStatusHandler(statusCode -> statusCode.isSameCodeAs(HttpStatusCode.valueOf(500)),
                         (request, response) -> {
